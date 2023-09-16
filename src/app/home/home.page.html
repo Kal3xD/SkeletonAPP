@@ -1,20 +1,79 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" >
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Home</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Menu</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  
+      
+  <div id="home">
+    
+    <ion-card #animacion>
+      <ion-card-content>Bienvenido!</ion-card-content>
+    </ion-card>
+
+    <h6>Usuario: {{data.user.usuario}} </h6>
+    <h2>Informacion Adicional</h2>
+    <ion-list>
+      <ion-item>
+        <ion-input #inputnombre label="Nombre" label-placement="floating" fill="solid" required [(ngModel)]="persona.nombre"></ion-input>
+      </ion-item>
+
+      <ion-item>
+          <ion-input #inputapellido label="Apellido" label-placement="floating" fill="outline" required [(ngModel)]="persona.apellido"  ></ion-input>
+      </ion-item>
+    
+        <ion-item>
+          <ion-select label="Nivel Educacional" fill="inline">
+            <ion-select-option> Basica Completa</ion-select-option>
+            <ion-select-option>Media Completa</ion-select-option>
+            <ion-select-option>Superior Completa</ion-select-option>
+            <ion-select-option>Postgrado</ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+      
+        <mat-form-field>
+            <mat-label>Choose a date</mat-label>
+            <input matInput [matDatepicker]="picker">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+         </mat-form-field>
+        
+      
+      
+      
+      
+    </ion-list>
+    <ion-button (click)="limpiarCampos()" >Limpiar</ion-button>
+    <ion-button (click)="presentAlert1()">Aceptar</ion-button>
   </div>
+  
+
+  
 </ion-content>
+
+<ion-footer> 
+  <ion-toolbar>
+    <ion-segment value="all">
+      <ion-segment-button (click)="exp_lab()" value="Experiencia" >
+        <ion-label>Experiencia Laboral</ion-label>
+      </ion-segment-button>
+      <ion-segment-button (click)="mis_datos()" value="MisDatos">
+        <ion-label>Mis Datos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button (click)="certificaciones()" value="Certificaciones">
+        <ion-label>Certificaciones</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar> 
+</ion-footer>
+  
