@@ -2,8 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
+import { DbtaskService } from '../dbtask.service';
+
+
 
 import { AutenticacionService } from '../autenticacion.service';
+import { __param } from 'tslib';
 
 
 @Component({
@@ -13,15 +17,16 @@ import { AutenticacionService } from '../autenticacion.service';
 })
 export class LoginPage implements OnInit {
 
-  user = {
+  login:any = {
     usuario: "",
     password: ""
 
   }
 
   field:string="";
+  alertController: any;
 
-  constructor(private router: Router,public toastController: ToastController ,private auth: AutenticacionService ) { }
+  constructor(private router: Router,public toastController: ToastController, public dbtaskService: DbtaskService ,private storage: Storage,private auth: AutenticacionService ) { }
 
   ngOnInit() {
     
@@ -29,36 +34,53 @@ export class LoginPage implements OnInit {
 
   
   ingresar(){
-    try{
-      if(this.validateModel(this.user)){
-        let navigationExtras: NavigationExtras = {
-          state: {
-            user: this.user
-          }
-        };
-        this.auth.login(this.user.usuario,this.user.password);
-        this.router.navigate(['/home'],navigationExtras);
+  
+      if(this.validateModel(this.login)){
+        this.auth.login(this.login);
       }
       else{
-        this.presentToast(this.field);
+        this.presentToast("Falta "+this.field);
       }
-      
     }
-    catch(error){
-      
-      this.router.navigate(['/login']);
+  
+  /* Registrar */
+
+  registrar(){
+    this.createSesionData(this.login)
+  }
+/*
+  @param login*/
+  
+  createSesionData(login: any){
+    if(this.validateModel(login)){
+
+      let copy= Object.assign({},login);
+      copy.Active=1;
+      this.dbtaskService.createSesionData(copy)
+      .then((data)=>{
+        this.presentToast("Bienvenido");
+        this.storage['set']("USER_DATA", data);
+        this.router.navigate(['home']);
+
+      })
+      .catch((error)=>{
+        this.presentToast("El usuario ya existe");
+      })
     }
-    
+    else{
+      this.presentToast("Falta: "+this.field)
+    }
   }
 
   validateModel(model:any){
     for (var [key, value] of Object.entries(model)) {
       if (value=="") {
-        this.field="Falta : "+key;
+        this.field= key;
         return false;
       }
     }
     
+
     var password = model.password;
     const regex = /^[0-9]*$/;
     const onlyNumbers = regex.test(password); // true
@@ -87,5 +109,40 @@ export class LoginPage implements OnInit {
     toast.present();
   }
 
+
+  ionViewWillEnter(){
+    console.log('ionViewDidEnter');
+      // Se valida que exista una sesión activa
+      this.dbtaskService.sesionActive()
+      .then((data)=>{
+        if(data!=undefined){
+          this.storage['set']("USER_DATA",data); 
+          this.router.navigate(['home']);
+        }
+      })
+      .catch((error)=>{
+        console.error(error);
+        this.router.navigate(['login']);
+      })
+  }
+  async presentAlertConfirm() {
+    const alert = await this.alertController.create({
+      header: 'Creación de Usuario',
+      message: 'Mensaje <strong>El usuario no existe, desea registrarse?</strong>',
+      buttons: [
+        {
+          text: 'NO',
+          role: 'cancel'
+        }, {
+          text: 'SI',
+          handler: () => {
+            this.createSesionData(this.login)
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
 }
 

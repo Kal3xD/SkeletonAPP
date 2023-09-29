@@ -17,12 +17,14 @@
       <h1>Ingresar </h1>
       <ion-list>
         <ion-item lines="full" >
-          <ion-input [clearInput]="true" label="Usuario" label-placement="floating" fill="outline" placeholder="Ingresar usuario"  maxlength="8" minlength="3" [(ngModel)]="user.usuario" ></ion-input>
+          <ion-input [clearInput]="true" label="Usuario" label-placement="floating" fill="outline" placeholder="Ingresar usuario"  maxlength="8" minlength="3" [(ngModel)]="login.usuario" ></ion-input>
         </ion-item>
         <ion-item lines="full">
-          <ion-input label="Password" [clearInput]="true" label-placement="floating" type="Password" fill="inline" placeholder="Password" [(ngModel)]="user.password" maxlength="4" minlength="4" ></ion-input>
+          <ion-input label="Password" [clearInput]="true" label-placement="floating" type="Password" fill="inline" placeholder="Password" [(ngModel)]="login.password" maxlength="4" minlength="4" ></ion-input>
         </ion-item>  
         <ion-button (click)="ingresar()" >Login</ion-button>
+        <ion-button (click)="registrar()" >Registrar</ion-button>
+
         <ion-button>Volver</ion-button>
         
       </ion-list>

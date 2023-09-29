@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+
+
 import { Observable, delay, of, tap, BehaviorSubject } from 'rxjs';
+import { ToastController } from '@ionic/angular';
+import { DbtaskService } from './dbtask.service';
+
+
 
 
 
@@ -8,26 +15,58 @@ import { Observable, delay, of, tap, BehaviorSubject } from 'rxjs';
 })
 export class AutenticacionService {
 
-  isUserLoggedIn: boolean = false;
+  authState = new BehaviorSubject(false);  
+  constructor(
+   private router: Router,
+   private storage: Storage,
+   public dbtaskService: DbtaskService,
+   public toastController: ToastController
+  ) {
+   this.isLogged();
+   }
 
-  login(userName: string, password: string): Observable<boolean> {
-      console.log(userName);
-      console.log(password);
-      this.isUserLoggedIn = userName == 'admin' && password == 'admin';
-      localStorage.setItem('isUserLoggedIn', this.isUserLoggedIn ? "true" : "false"); 
-
-   return of(this.isUserLoggedIn).pipe(
-      delay(1000),
-      tap(val => { 
-         console.log("Is User Authentication is successful: " + val); 
+   isLogged(){
+      this.storage['get']("USER_DATA").
+      then((response: null)=>{
+         console.log(response)
+         if(response!=null){
+            this.authState.next(true);
+         }
       })
-   );
    }
 
-   logout(): void {
-   this.isUserLoggedIn = false;
-      localStorage.removeItem('isUserLoggedIn'); 
-   }
+   login(login:any){
+      
+      this.dbtaskService.getSesionData(login)
+      .then((data)=>{ 
+        if(data===undefined){ 
+          this.presentToast("Credenciales Incorrectas");
+        }else{ 
+          data.active=1; 
+          this.dbtaskService.updateSesionData(data) 
+          .then((response)=>{ 
+            this.storage['set']("USER_DATA",data); 
+            this.authState.next(true);
+            this.router.navigate(['home']); 
+            
+          });
+        }
+      })
+      .catch((error)=>{
+        console.log(error);
+      });
+    }
 
-  constructor() { }
+    async presentToast(message:string, duration?:number){
+      const toast = await this.toastController.create(
+        {
+          message:message,
+          duration:duration?duration:2000
+        }
+      );
+      toast.present();
+    }
+    isAuthenticated() {
+      return this.authState.value;
+    }
 }
