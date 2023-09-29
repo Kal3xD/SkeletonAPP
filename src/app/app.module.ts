@@ -11,12 +11,15 @@ import {BrowserAnimationsModule} from  '@angular/platform-browser/animations';
 
 import { NotfoundPage } from './errors/notfound/notfound.page';
 
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+
+
 
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, BrowserAnimationsModule ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, BrowserAnimationsModule, IonicModule, ],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, SQLite],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+
 
 @Component({
   selector: 'app-notfound',
@@ -10,9 +12,14 @@ import { IonicModule } from '@ionic/angular';
 })
 export class NotfoundPage implements OnInit {
 
-  constructor() { }
+  constructor(private activeroute: ActivatedRoute,
+    private router: Router,) {}
 
   ngOnInit() {
+  }
+
+  home(){
+    this.router.navigate(['/home'])
   }
 
 }
